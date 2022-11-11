@@ -29,9 +29,12 @@ Longer TODO:
 
 
 import importlib.util
+import sys
 import os
 
+import django
 from corsheaders.defaults import default_headers as corsheaders_default_headers
+from path import Path as path
 from django.utils.translation import gettext_lazy as _
 from enterprise.constants import (
     ENTERPRISE_ADMIN_ROLE,
@@ -41,15 +44,15 @@ from enterprise.constants import (
     ENTERPRISE_REPORTING_CONFIG_ADMIN_ROLE,
     ENTERPRISE_OPERATOR_ROLE
 )
-from path import Path as path
 
-from lms.djangoapps.lms_xblock.mixin import LmsBlockMixin
+from openedx.core.constants import COURSE_KEY_REGEX, COURSE_KEY_PATTERN, COURSE_ID_PATTERN
 from openedx.core.djangoapps.theming.helpers_dirs import (
     get_themes_unchecked,
     get_theme_base_dirs_from_settings
 )
 from openedx.core.lib.derived import derived, derived_collection_entry
 from openedx.core.release import doc_version
+from lms.djangoapps.lms_xblock.mixin import LmsBlockMixin
 
 ################################### FEATURES ###################################
 # .. setting_name: PLATFORM_NAME
