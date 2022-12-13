@@ -384,6 +384,26 @@ def enterprise_is_enabled(otherwise=None):
         return wrapper
     return decorator
 
+def lek_main_enabled():
+    """
+    Determines whether the Enterprise app is installed
+    """
+    return 'lektorium_main' in settings.INSTALLED_APPS and settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN', False)
+
+def lek_main_is_enabled(otherwise=None):
+    """Decorator which requires that the Lektorium feature be enabled before the function can run."""
+
+    def decorator(func):
+        """Decorator for ensuring the Lektorium feature is enabled."""
+
+        def wrapper(*args, **kwargs):
+            if lek_main_enabled():
+                return func(*args, **kwargs)
+            return otherwise
+
+        return wrapper
+
+    return decorator
 
 def get_enterprise_customer_cache_key(uuid, username=settings.ENTERPRISE_SERVICE_WORKER_USERNAME):
     """The cache key used to get cached Enterprise Customer data."""
@@ -1003,6 +1023,19 @@ def insert_enterprise_pipeline_elements(pipeline):
     for index, element in enumerate(additional_elements):
         pipeline.insert(insert_point + index, element)
 
+@lek_main_is_enabled()
+def insert_lektorium_main_pipeline_elements(pipeline):
+    """
+    If the enterprise app is enabled, insert additional elements into the
+    pipeline related to enterprise.
+    """
+    additional_elements = (
+        'lektorium_main.pipeline.profile.create',
+    )
+
+    insert_point = pipeline.index('social_core.pipeline.user.user_details')
+    for index, element in enumerate(additional_elements):
+        pipeline.insert(insert_point + index, element)
 
 @enterprise_is_enabled()
 def unlink_enterprise_user_from_idp(request, user, idp_backend_name):
