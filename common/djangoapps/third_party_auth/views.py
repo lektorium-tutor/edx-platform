@@ -20,6 +20,7 @@ from common.djangoapps.student.views import compose_and_send_activation_email
 from common.djangoapps.third_party_auth import pipeline, provider
 
 from .models import SAMLConfiguration, SAMLProviderConfig
+from lektorium_main.profile.models import is_verefication_educont_profile
 
 URL_NAMESPACE = getattr(settings, setting_name('URL_NAMESPACE'), None) or 'social'
 
@@ -47,12 +48,17 @@ def inactive_user_view(request):
     if third_party_auth.is_enabled() and pipeline.running(request):
         running_pipeline = pipeline.get(request)
         third_party_provider = provider.Registry.get_from_pipeline(running_pipeline)
-        if third_party_provider.skip_email_verification and not activated:
+        if not is_verefication_educont_profile(user):
+            user.is_active = False
+            user.save()
+            activated = True
+        elif third_party_provider.skip_email_verification and not activated:
             user.is_active = True
             user.save()
             activated = True
     if not activated:
         compose_and_send_activation_email(user, profile)
+
 
     request_params = request.GET
     redirect_to = request_params.get('next')

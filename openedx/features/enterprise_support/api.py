@@ -392,17 +392,13 @@ def lek_main_enabled():
 
 def lek_main_is_enabled(otherwise=None):
     """Decorator which requires that the Lektorium feature be enabled before the function can run."""
-
     def decorator(func):
         """Decorator for ensuring the Lektorium feature is enabled."""
-
         def wrapper(*args, **kwargs):
             if lek_main_enabled():
                 return func(*args, **kwargs)
             return otherwise
-
         return wrapper
-
     return decorator
 
 def get_enterprise_customer_cache_key(uuid, username=settings.ENTERPRISE_SERVICE_WORKER_USERNAME):
@@ -1033,7 +1029,7 @@ def insert_lektorium_main_pipeline_elements(pipeline):
         'lektorium_main.pipeline.profile.create',
     )
 
-    insert_point = pipeline.index('social_core.pipeline.user.user_details')
+    insert_point = pipeline.index('common.djangoapps.third_party_auth.pipeline.user_details_force_sync')
     for index, element in enumerate(additional_elements):
         pipeline.insert(insert_point + index, element)
 
