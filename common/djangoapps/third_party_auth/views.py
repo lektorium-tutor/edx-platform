@@ -52,7 +52,7 @@ def inactive_user_view(request):
     if third_party_auth.is_enabled() and pipeline.running(request):
         running_pipeline = pipeline.get(request)
         third_party_provider = provider.Registry.get_from_pipeline(running_pipeline)
-        if not is_verefication_educont_profile(user) and enable_lektorium_main:
+        if is_verefication_educont_profile(user) and enable_lektorium_main:
             user.is_active = False
             user.save()
             activated = True
