@@ -60,6 +60,9 @@ from common.djangoapps.student.models import (
 )
 from common.djangoapps.util.milestones_helpers import get_pre_requisite_courses_not_completed
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
+#lektorium_main_edit
+if settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN'):
+    from lektorium_main.profile.models import get_message_status_educont_profile
 
 log = logging.getLogger("edx.student")
 
@@ -532,7 +535,10 @@ def student_dashboard(request):  # lint-amnesty, pylint: disable=too-many-statem
     empty_dashboard_message = configuration_helpers.get_value(
         'EMPTY_DASHBOARD_MESSAGE', None
     )
-
+    enable_lektorium_main = configuration_helpers.get_value(
+        'ENABLE_LEKTORIUM_MAIN',
+        settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN')
+    )
     disable_course_limit = request and 'course_limit' in request.GET
     course_limit = get_dashboard_course_limit() if not disable_course_limit else None
 
@@ -575,9 +581,12 @@ def student_dashboard(request):  # lint-amnesty, pylint: disable=too-many-statem
     )
     course_optouts = Optout.objects.filter(user=user).values_list('course_id', flat=True)
 
+    #lektorium_main_edit
     # Display activation message
     activate_account_message = ''
-    if not user.is_active:
+    if enable_lektorium_main and not user.is_active:
+        activate_account_message = get_message_status_educont_profile(user)     
+    elif not user.is_active:
         activate_account_message = Text(_(
             "Check your {email_start}{email}{email_end} inbox for an account activation link from {platform_name}. "
             "If you need help, contact {link_start}{platform_name} Support{link_end}."

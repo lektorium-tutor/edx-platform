@@ -384,12 +384,14 @@ def enterprise_is_enabled(otherwise=None):
         return wrapper
     return decorator
 
+#lektorium_main_edit
 def lek_main_enabled():
     """
     Determines whether the Enterprise app is installed
     """
     return 'lektorium_main' in settings.INSTALLED_APPS and settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN', False)
 
+#lektorium_main_edit
 def lek_main_is_enabled(otherwise=None):
     """Decorator which requires that the Lektorium feature be enabled before the function can run."""
     def decorator(func):
@@ -1019,6 +1021,7 @@ def insert_enterprise_pipeline_elements(pipeline):
     for index, element in enumerate(additional_elements):
         pipeline.insert(insert_point + index, element)
 
+#lektorium_main_edit
 @lek_main_is_enabled()
 def insert_lektorium_main_pipeline_elements(pipeline):
     """
