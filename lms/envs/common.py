@@ -3941,7 +3941,7 @@ OPTIONAL_APPS = [
 
     # Required by the Enterprise App
     ('django_object_actions', None),  # https://github.com/crccheck/django-object-actions
-    ('lektorium_main', None)
+    #('lektorium_main', None)
 ]
 
 for app_name, insert_before in OPTIONAL_APPS:
