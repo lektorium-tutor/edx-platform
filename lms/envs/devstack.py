@@ -2,7 +2,6 @@
 Specific overrides to the base prod settings to make development easier.
 """
 
-
 # Silence noisy logs
 import logging
 from os.path import abspath, dirname, join
@@ -93,9 +92,11 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.headers.HeadersPanel',
     'debug_toolbar.panels.request.RequestPanel',
     'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.history.HistoryPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+    # 'debug_toolbar.panels.history.HistoryPanel',
     # ProfilingPanel has been intentionally removed for default devstack.py
     # runtimes for performance reasons. If you wish to re-enable it in your
     # local development environment, please create a new settings file
@@ -160,20 +161,16 @@ FEATURES['ENTRANCE_EXAMS'] = True
 ################################ COURSE LICENSES ################################
 FEATURES['LICENSING'] = True
 
-
 ########################## Courseware Search #######################
 FEATURES['ENABLE_COURSEWARE_SEARCH'] = False
 FEATURES['ENABLE_COURSEWARE_SEARCH_FOR_COURSE_STAFF'] = True
 SEARCH_ENGINE = 'search.elastic.ElasticSearchEngine'
 
-
 ########################## Dashboard Search #######################
 FEATURES['ENABLE_DASHBOARD_SEARCH'] = False
 
-
 ########################## Certificates Web/HTML View #######################
 FEATURES['CERTIFICATES_HTML_VIEW'] = True
-
 
 ########################## Course Discovery #######################
 LANGUAGE_MAP = {
@@ -213,7 +210,6 @@ DISABLE_ACCOUNT_ACTIVATION_REQUIREMENT_SWITCH = "verify_student_disable_account_
 # Skip enrollment start date filtering
 SEARCH_SKIP_ENROLLMENT_START_DATE_FILTERING = True
 
-
 ########################## Shopping cart ##########################
 FEATURES['ENABLE_COSMETIC_DISPLAY_PRICE'] = True
 
@@ -223,7 +219,7 @@ FEATURES['ENABLE_ENROLLMENT_RESET'] = True
 ########################## Third Party Auth #######################
 
 if FEATURES.get('ENABLE_THIRD_PARTY_AUTH') and (
-        'common.djangoapps.third_party_auth.dummy.DummyBackend' not in AUTHENTICATION_BACKENDS
+    'common.djangoapps.third_party_auth.dummy.DummyBackend' not in AUTHENTICATION_BACKENDS
 ):
     AUTHENTICATION_BACKENDS = ['common.djangoapps.third_party_auth.dummy.DummyBackend'] + list(AUTHENTICATION_BACKENDS)
 
@@ -314,7 +310,6 @@ JWT_AUTH.update({
 })
 add_plugins(__name__, ProjectType.LMS, SettingsType.DEVSTACK)
 
-
 ######################### Django Rest Framework ########################
 
 REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] += (
@@ -333,11 +328,9 @@ for store in MODULESTORE['default']['OPTIONS']['stores']:
     if 'DOC_STORE_CONFIG' in store and 'replicaSet' in store['DOC_STORE_CONFIG']:
         store['DOC_STORE_CONFIG']['replicaSet'] = None
 
-
 #####################################################################
 # Lastly, run any migrations, if needed.
 MODULESTORE = convert_module_store_setting_if_needed(MODULESTORE)
-
 
 SECRET_KEY = '85920908f28904ed733fe576320db18cabd7b6cd'
 

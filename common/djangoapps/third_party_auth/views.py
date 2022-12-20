@@ -22,7 +22,7 @@ from common.djangoapps.third_party_auth import pipeline, provider
 from .models import SAMLConfiguration, SAMLProviderConfig
 #lektorium_main_edit
 if settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN'):
-    from lektorium_main.profile.models import is_verefication_educont_profile
+    from lektorium_main.profile.models import is_verification_educont_profile
 
 URL_NAMESPACE = getattr(settings, setting_name('URL_NAMESPACE'), None) or 'social'
 
@@ -52,7 +52,7 @@ def inactive_user_view(request):
     if third_party_auth.is_enabled() and pipeline.running(request):
         running_pipeline = pipeline.get(request)
         third_party_provider = provider.Registry.get_from_pipeline(running_pipeline)
-        if is_verefication_educont_profile(user) and enable_lektorium_main:
+        if is_verification_educont_profile(user) and enable_lektorium_main:
             user.is_active = False
             user.save()
             activated = True
