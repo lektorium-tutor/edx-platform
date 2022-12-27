@@ -20,7 +20,7 @@ import logging
 from config_models.models import ConfigurationModel
 from django.conf import settings
 from django.contrib.auth.models import User  # lint-amnesty, pylint: disable=imported-auth-user
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save
 
 from django.utils.translation import gettext_lazy as _
@@ -165,6 +165,7 @@ class StudentModule(models.Model):
         return module_states
 
     @classmethod
+    @transaction.atomic()
     def save_state(cls, student, course_id, module_state_key, defaults):  # lint-amnesty, pylint: disable=missing-function-docstring
         if not student.is_authenticated:
             return
@@ -245,7 +246,7 @@ class StudentModuleHistory(BaseStudentModuleHistory):
     student_module = models.ForeignKey(StudentModule, db_index=True, db_constraint=False, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(repr(self))
+        return str(repr(self.student_module))
 
     def save_history(sender, instance, **kwargs):  # pylint: disable=no-self-argument, unused-argument
         """
