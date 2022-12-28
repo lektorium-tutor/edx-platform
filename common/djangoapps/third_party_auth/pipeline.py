@@ -103,6 +103,8 @@ from common.djangoapps.track import segment
 from common.djangoapps.util.json_request import JsonResponse
 
 from . import provider
+if settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN'):
+    from lektorium_main.profile.models import disconnect_user_educont
 
 # These are the query string params you can pass
 # to the URL that starts the authentication process.
@@ -377,7 +379,10 @@ def get_disconnect_url(provider_id, association_id):
         ValueError: if no provider is enabled with the given ID.
     """
     backend_name = _get_enabled_provider(provider_id).backend_name
+    enable_lektorium_main = settings.FEATURES.get('ENABLE_LEKTORIUM_MAIN')
     if association_id:
+        if enable_lektorium_main:
+            disconnect_user_educont(association_id)
         return _get_url('social:disconnect_individual', backend_name, url_params={'association_id': association_id})
     else:
         return _get_url('social:disconnect', backend_name)
