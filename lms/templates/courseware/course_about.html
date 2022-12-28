@@ -73,7 +73,10 @@ from six import string_types
         </div>
 
         <div class="main-cta">
-        %if user.is_authenticated and registered:
+            %if user.is_authenticated and user.is_active
+                <span class="register disabled">Взаимодействие с курсом доступно только при активированной учетной записи.</span>
+            %endif
+        %if user.is_authenticated and user.is_active and registered:
           %if show_courseware_link:
             <a href="${course_target}">
           %endif
