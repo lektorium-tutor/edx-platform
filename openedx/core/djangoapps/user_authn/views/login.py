@@ -257,8 +257,8 @@ def _handle_failed_authentication(user, authenticated_user):
         if LoginFailures.is_feature_enabled():
             LoginFailures.increment_lockout_counter(user)
 
-        if authenticated_user and not user.is_active:
-            _log_and_raise_inactive_user_auth_error(user)
+        # if authenticated_user and not user.is_active:
+        #     _log_and_raise_inactive_user_auth_error(user)
 
         # if we didn't find this username earlier, the account for this email
         # doesn't exist, and doesn't have a corresponding password
