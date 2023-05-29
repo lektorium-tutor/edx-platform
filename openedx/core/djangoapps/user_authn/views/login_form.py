@@ -164,27 +164,28 @@ def login_and_registration_form(request, initial_mode="login"):
     # If present, we display a login page focused on third-party auth with that provider.
     third_party_auth_hint = None
     tpa_hint_provider = None
-    if '?' in redirect_to:  # lint-amnesty, pylint: disable=too-many-nested-blocks
-        try:
-            next_args = urllib.parse.parse_qs(urllib.parse.urlparse(redirect_to).query)
-            if 'tpa_hint' in next_args:
-                provider_id = next_args['tpa_hint'][0]
-                tpa_hint_provider = third_party_auth.provider.Registry.get(provider_id=provider_id)
-                if tpa_hint_provider:
-                    if tpa_hint_provider.skip_hinted_login_dialog:
-                        # Forward the user directly to the provider's login URL when the provider is configured
-                        # to skip the dialog.
-                        if initial_mode == "register":
-                            auth_entry = pipeline.AUTH_ENTRY_REGISTER
-                        else:
-                            auth_entry = pipeline.AUTH_ENTRY_LOGIN
-                        return redirect(
-                            pipeline.get_login_url(provider_id, auth_entry, redirect_url=redirect_to)
-                        )
-                    third_party_auth_hint = provider_id
-                    initial_mode = "hinted_login"
-        except (KeyError, ValueError, IndexError) as ex:
-            log.exception("Unknown tpa_hint provider: %s", ex)
+    # if '?' in redirect_to:  # lint-amnesty, pylint: disable=too-many-nested-blocks
+    try:
+        next_args = urllib.parse.parse_qs(urllib.parse.urlparse(redirect_to).query)
+        # if 'tpa_hint' in next_args:
+        # provider_id = next_args['tpa_hint'][0]
+        provider_id = 'oa2-sso'
+        tpa_hint_provider = third_party_auth.provider.Registry.get(provider_id=provider_id)
+        if tpa_hint_provider:
+            if tpa_hint_provider.skip_hinted_login_dialog:
+                # Forward the user directly to the provider's login URL when the provider is configured
+                # to skip the dialog.
+                if initial_mode == "register":
+                    auth_entry = pipeline.AUTH_ENTRY_REGISTER
+                else:
+                    auth_entry = pipeline.AUTH_ENTRY_LOGIN
+                return redirect(
+                    pipeline.get_login_url(provider_id, auth_entry, redirect_url=redirect_to)
+                )
+            third_party_auth_hint = provider_id
+            initial_mode = "hinted_login"
+    except (KeyError, ValueError, IndexError) as ex:
+        log.exception("Unknown tpa_hint provider: %s", ex)
 
     # Redirect to authn MFE if it is enabled
     # AND
